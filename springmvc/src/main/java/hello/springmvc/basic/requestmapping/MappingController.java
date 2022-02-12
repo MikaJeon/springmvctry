@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
-
+//어떤 요청이 왔을 때 어떤 컨트롤러가 연결이 되어야 하는지 설정
 public class MappingController {
     private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -12,7 +12,9 @@ public class MappingController {
     public String helloBasic() {
         log.info("helloBasic");
         return "ok";
-    }//기본. URL 매핑!
+    }//기본. URL 매핑! 대부분의 속성이 배열로 제공되므로 다중 설정 가능! {"/url-1","/url-2"}이런식으로 ()안에 넣으면 됨. or조건
+    //사실 /url과 /url/은 다른 url이지만 스프링은 동일한 요청으로 매핑해줌.
+    //메서드 지정 안하면 get등의 메서드와 무관하게 그냥 출력 됨.
 
     @RequestMapping(value = "/mapping-get-v1", method = RequestMethod.GET)
     public String mappingGetV1() {
@@ -25,7 +27,14 @@ public class MappingController {
     public String mappingHeader(){
         log.info("mappingHeader");
         return  "ok";
-        //헤더에 mode는 디버그 이 값을 넣고 호출하면 저 헤더 조건에 맞는 경우 호출이 됨.
+        //헤더에 mode=디버그 이 값을 넣고 호출하면 저 헤더 조건에 맞는 경우 호출이 됨. 호출 조건을 추가한거!
+    }
+
+    @GetMapping(value = "/mapping-param", headers = "mode=debug")
+    public String mappingParam(){
+        log.info("mappingParam");
+        return  "ok";
+        //호출 조건을 추가한거! /mapping-param?mode=debug 의 url에만 호출됨
     }
 
     @GetMapping(value = "/mapping-get-v2")
@@ -33,17 +42,18 @@ public class MappingController {
         log.info("mapping-get-v2");
         return "ok";
     }
-    //매핑을 축약한 버전.
+    //매핑을 축약한 버전. get post put delete patch 다 앞에 똑같이 붙이면 됨. 스프링에서 리퀘스트매핑(get메서드) 이런식으로 설정을 해뒀음
 
     @GetMapping("/mapping/{userId}")
     public String mappingPath(@PathVariable("userId") String data) {
         log.info("mappingPath userId={}", data);
         return "ok";
     }
-    //경로 변수 사용! PathVariable를 이용했다.
-    //@PathVariable 는 매핑 어노테이션 url 정의 부분과 메소드 내의 파라미터부분에 정의해서 사용할 수 있다.
-    //메핑 어노테이션에는 {}의 템플릿 변수를, 파라미터 부분엔 @PathVariable("템플릿변수와동일")이런 식으로
-    //추가하면 된다. 말 그대로 url 경로에 변수를 넣어주는 역할을 함
+    //{}로 템플릿 화!! PathVariable를 이용했다.
+    //mapping/userid 이런 식으로 오는거.
+    //@PathVariable("userId") String data 이렇게 userId 받은 걸 data 변수로 꺼내서 사용 가능.
+    //변수명 동일하게 할거면 @PathVariable String userId 일케만 해도 됨
+    //내가 아는 ?user=a는 쿼리파라미터 방식임
 
     @GetMapping("/mapping/users/{userId}/orders/{orderId}")
     public String mappingPath(@PathVariable String userId, @PathVariable Long
@@ -51,7 +61,7 @@ public class MappingController {
         log.info("mappingPath userId={}, orderId={}", userId, orderId);
         return "ok";
     }
-    // 다중 사용도 가능
+    // 다중 사용도 가능. 파라미터로 받은 userId를 바로 userId에 넣는 방식
 
     @PostMapping(value = "/mapping-consume", consumes = "application/json")
     public String mappingConsumes(){
