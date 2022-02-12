@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogTestController {
     private final Logger log = LoggerFactory.getLogger(getClass());//꼭 slf4j. 그리고 현재 내 클래스 지정(getclass)
     //시스아웃같은걸로 정보를 출력하지 않고 별도의 로깅 라이브러리를 사용해 로그를 출력함.
+    // 부가 정보도 같이 볼 수 있고 상황에 맞춰서 출력할지 말지 조절이 가능하기 때문. 시스아웃보다 성능도 좋음
+    //로거는 파일로 남길수도 있다! 네트워크로 로거를 전송할 수도 있다! 로거파일의 자동 분할, 백업 이런것도 지원해준다.
     //스프링 부트에서는 로깅 라이브러리가 있다. 프로젝트가 인터페이스 화 되어 들어있음. 기본으로 slf4j(인터페이스) logback(구현체)
     @RequestMapping("/log-test")
     public String logTest() {
